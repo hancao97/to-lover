@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To Lover</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .container {
+      height: 100vh;
+      width: 100vw;
+      background-color: cornsilk;
+      display: flex;
+    }
+
+    .container>div {
+      height: 100vh;
+    }
+
+    .left {
+      width: 25%;
+      background-color: rgb(14, 39, 68);
+    }
+
+    .right {
+      width: 75%;
+      position: relative;
+      background-color: rgba(228, 231, 12, 0.5);
+      overflow: hidden;
+      transition: all 2s linear;
+    }
+
+    .content {
+      color: rgb(223, 223, 217);
+      margin-top: 50px;
+      margin-left: 30px;
+      width: 80%;
+      height: 90%;
+      font-weight: 9;
+    }
+
+    .time {
+      position: absolute;
+      transition: all 1s ease;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      opacity: 0;
+    }
+
+    .time>div {
+      display: inline-block;
+      width: auto;
+      margin-left: 1px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 90px;
+      color: #45463d;
+      line-height: 35px;
+      text-transform: uppercase;
+      line-height: 100vh;
+      margin-left: 10px;
+      transition: all 1s ease;
+    }
+
+    .heart {
+      background-color: #000;
+      margin: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: all 5s ease;
+      background-repeat: no-repeat;
+    }
+
+    @keyframes star-scale {
+      from {
+        transform: scale(1, 1);
+      }
+
+      25% {
+        transform: scale(0.1, 0.1);
+      }
+
+      50% {
+        transform: scale(1, 1);
+      }
+
+      75% {
+        transform: scale(2, 2);
+      }
+
+      to {
+        transform: scale(1, 1);
+      }
+    }
+
+    .star {
+      height: 3px;
+      width: 3px;
+      border-radius: 50%;
+      position: absolute;
+      animation: star-scale 2s linear;
+      animation-iteration-count: infinite;
+      z-index: 999;
+    }
+
+    @keyframes moonrise {
+      from {
+        top: 110vh;
+      }
+
+      to {
+        top: 18vh;
+      }
+    }
+
+    .moon {
+      width: 500px;
+      height: 500px;
+      animation: moonrise 5s;
+      border-radius: 50%;
+      position: absolute;
+      left: 20vw;
+      top: 18vh;
+      background: #f9dc60;
+      box-shadow: 0px 0px 20px #f9dc60;
+      transition: all 3s ease;
+    }
+
+    @keyframes rain {
+      from {
+        transform: scale(1, 1);
+        opacity: 1;
+      }
+      50% {
+        opacity: 1;
+      }
+      to {
+        transform: scale(100, 100);
+        opacity: 0;
+      }
+    }
+
+    .rain {
+      height: 3px;
+      width: 3px;
+      background: radial-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.3));
+      border-radius: 50%;
+      transform-origin: 50% 50%;
+      opacity: 0;
+      animation: rain 5s linear;
+      position: absolute;
+      z-index: 999;
+    }
+
+    .poetry div {
+      width: 40px;
+      height: 40px;
+      margin-top: 6px;
+    }
+
+    .poetry-top {
+      position: absolute;
+      top: 10vh;
+      right: 48px;
+    }
+
+    .poetry-down {
+      position: absolute;
+      top: 20vh;
+      right: 130px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="left">
+      <div class="content"></div>
+    </div>
+    <div class="right">
+      <div class="time">
+        <div>九</div>
+        <div>月</div>
+        <div>十</div>
+        <div style="color: rgba(233, 62, 59, 0.2);">一</div>
+        <div>日</div>
+      </div>
+      <div class="heart">
+        <canvas id="canvas" width="1400" height="600"></canvas>
+      </div>
+      <div class="poetry-top poetry">
+        <div id="yu"></div>
+        <div id="jian"></div>
+        <div id="ni"></div>
+        <div id="cai"></div>
+        <div id="zhi"></div>
+        <div id="dao"></div>
+      </div>
+      <div class="poetry-down poetry">
+        <div id="cao"></div>
+        <div id="de"></div>
+        <div id="xin"></div>
+        <div id="li"></div>
+        <div id="ye"></div>
+        <div id="neng"></div>
+        <div id="kai"></div>
+        <div id="chu"></div>
+        <div id="yi"></div>
+        <div id="duo"></div>
+        <div id="hua"></div>
+        <div id="lai"></div>
+      </div>
+    </div>
+  </div>
+  <script src="./js/deferred.js"></script>
+  <script src="./js/heart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.2/dist/hanzi-writer.min.js"></script>
+  <script>
+    const content = document.getElementsByClassName('content')[0];
+    const view = document.getElementsByClassName('right')[0];
+
+    function stepSpace() {
+      content.appendChild(document.createElement('br'));
+      return Promise.resolve();
+    }
+
+    function stepTime() {
+      const deferred = new Deferred();
+      const time = document.getElementsByClassName('time')[0];
+      time.style.opacity = 1;
+      const number = time.children[3];
+      const list = ['二', '三', '四', '五'];
+      let site = 0;
+      const timer = setInterval(() => {
+        if (site == list.length) {
+          document.getElementsByClassName('heart')[0].style.opacity = 1;
+          clearInterval(timer);
+          time.style.opacity = 0;
+          deferred.resolve();
+        } else {
+          number.innerHTML = list[site];
+          number.style.color = `rgba(233, 62, 59, ${(site + 2) * 0.2})`;
+          site++;
+        }
+      }, 1000)
+      return deferred.promise;
+    }
+
+    function stepWord(str, color) {
+      const step = str;
+      const deferred = new Deferred();
+      const len = step.length;
+      let site = 0;
+      content.appendChild(document.createElement('div'));
+      const child = content.children[content.children.length - 1];
+      if (color) {
+        child.style.color = color;
+      }
+      const timer = setInterval(() => {
+        child.innerHTML = step.slice(0, site + 1);
+        if (site == len) {
+          clearInterval(timer);
+          deferred.resolve();
+        } else {
+          site++;
+        }
+      }, 100)
+      return deferred.promise;
+    }
+
+    function stepDown() {
+      const deferred = new Deferred();
+      function Star() {
+        this.speed = 3;
+        this.star = document.createElement('div');
+        this.star.className = 'star';
+        this.star.innerHTML = Math.random() > 0.5 ? '🐶' : '❤️';
+        this.star.style.top = '0px';
+        this.star.style.left = Math.random() * window.innerWidth * 0.8 + 300 + 'px';
+        document.body.appendChild(this.star);
+      }
+      Star.prototype.down = function () {
+        var that = this;
+        function move() {
+          that.star.style.top = that.star.offsetTop + that.speed + 'px';
+          if (that.star.offsetTop > window.innerHeight) {
+            clearInterval(timer);
+            document.body.removeChild(that.star);
+          }
+        }
+        var timer = setInterval(move, 25);
+      }
+      let starTimer = setInterval(() => {
+        new Star().down();
+      }, 300)
+      setTimeout(() => {
+        clearInterval(starTimer);
+        deferred.resolve();
+      }, 10000)
+      return deferred.promise;
+    }
+
+    function stepMoon() {
+      const deferred = new Deferred();
+      const moon = document.createElement('div');
+      moon.className = 'moon';
+      view.appendChild(moon);
+      setTimeout(() => {
+        moon.style.background = "radial-gradient(rgba(249, 220, 96, 0.7), rgba(249, 220, 96, 0.9))"
+        deferred.resolve();
+      }, 5000)
+      return deferred.promise;
+    }
+
+    function stepRemove() {
+      document.getElementsByClassName('heart')[0].style.opacity = 0;
+      document.getElementsByClassName('moon')[0].style.opacity = 0;
+      view.style.background = '#fff';
+      return Promise.resolve();
+    }
+
+    function stepRain() {
+      const deferred = new Deferred();
+      function Rain() {
+        this.rain = document.createElement('div');
+        this.rain.className = 'rain';
+        this.rain.style.top = Math.random() * window.innerHeight * 0.7 + 'px';
+        this.rain.style.left = Math.random() * window.innerWidth * 0.7 + 'px';
+        this.rain.style.animation = 'rain 6s linear'
+        view.appendChild(this.rain);
+        const timer2 = setTimeout(() => {
+          clearTimeout(timer2);
+          view.removeChild(this.rain);
+        }, 6000)
+      }
+      let starTimer = setInterval(() => {
+        new Rain();
+      }, 300)
+      setTimeout(() => {
+        deferred.resolve();
+      }, 10000)
+      setTimeout(() => {
+        clearInterval(starTimer);
+      }, 12000)
+      return deferred.promise;
+    }
+
+    function stepColorFulRain() {
+      const deferred = new Deferred();
+      view.style.background = '#0E2744';
+      view.style.overflow = 'auto';
+      function Rain() {
+        this.rain = document.createElement('div');
+        this.rain.className = 'rain';
+        this.rain.style.top = Math.random() * window.innerHeight * 0.9 + 0.1 * window.innerHeight + 'px';
+        this.rain.style.left = Math.random() * window.innerWidth * 0.9 + 0.1 * window.innerWidth + 'px';
+        this.rain.style.background = `radial-gradient(rgba(255, 255, 255, 0.1), rgba(${Math.random() * 155 + 100}, ${Math.random() * 155 + 100}, ${Math.random() * 155 + 100}, 0.5))`;
+        this.rain.style.animation = 'rain 6s linear'
+        document.body.appendChild(this.rain);
+        const timer2 = setTimeout(() => {
+          clearTimeout(timer2);
+          document.body.removeChild(this.rain);
+        }, 6000)
+      }
+      let starTimer = setInterval(() => {
+        new Rain();
+      }, 300)
+      setTimeout(() => {
+        deferred.resolve();
+      }, 2000)
+      return deferred.promise;
+    }
+
+    function stepHanzi() {
+      const BASE_CONFIG = {
+        width: 40,
+        height: 40,
+        padding: 0,
+        delayBetweenStrokes: 0,
+        strokeAnimationSpeed: 5,
+        showCharacter: false,
+        showOutline: false,
+      }
+
+      const WRITER_CONFIGA = {
+        ...BASE_CONFIG,
+        strokeColor: '#c1e8fa'
+      };
+
+      const WRITER_CONFIGB = {
+        ...BASE_CONFIG,
+        strokeColor: '#db61ac'
+      };
+
+      const getWriterList = () => {
+        let writerList = [];
+        writerList.push(HanziWriter.create('yu', '遇', WRITER_CONFIGA));
+        writerList.push(HanziWriter.create('jian', '见', WRITER_CONFIGA));
+        writerList.push(HanziWriter.create('ni', '你', WRITER_CONFIGA));
+        writerList.push(HanziWriter.create('cai', '才', WRITER_CONFIGA));
+        writerList.push(HanziWriter.create('zhi', '知', WRITER_CONFIGA));
+        writerList.push(HanziWriter.create('dao', '道', WRITER_CONFIGA));
+
+        writerList.push(HanziWriter.create('cao', '草', WRITER_CONFIGB));
+        writerList.push(HanziWriter.create('de', '的', WRITER_CONFIGB));
+        writerList.push(HanziWriter.create('xin', '心', WRITER_CONFIGB));
+        writerList.push(HanziWriter.create('li', '里', WRITER_CONFIGB));
+        writerList.push(HanziWriter.create('ye', '也', WRITER_CONFIGB));
+        writerList.push(HanziWriter.create('neng', '能', WRITER_CONFIGB));
+        writerList.push(HanziWriter.create('kai', '开', WRITER_CONFIGB));
+        writerList.push(HanziWriter.create('chu', '出', WRITER_CONFIGB));
+        writerList.push(HanziWriter.create('yi', '一', WRITER_CONFIGB));
+        writerList.push(HanziWriter.create('duo', '朵', WRITER_CONFIGB));
+        writerList.push(HanziWriter.create('hua', '花', WRITER_CONFIGB));
+        writerList.push(HanziWriter.create('lai', '来', WRITER_CONFIGB));
+        return writerList;
+      }
+
+      const generateAnimateWriter = async (writerList) => {
+        const writerCount = writerList.length;
+        for (const writer of writerList) {
+          await writer.animateCharacter();
+        }
+      }
+      generateAnimateWriter(getWriterList());
+    }
+
+    setTimeout(() => {
+      stepWord('致 9.15', 'rgb(228, 231, 12)')
+        .then(() => stepWord('开始倒计时', '#c1e8fa'))
+        .then(() => stepWord('start the countdown', '#db61ac'))
+        .then(() => stepSpace())
+        .then(() => stepWord('🌟🌟🌟🌟🌟🌟'))
+        .then(() => stepSpace())
+        .then(() => stepTime())
+        .then(() => stepWord('心跳加速，藏獒开始进化', '#c1e8fa'))
+        .then(() => stepWord('The heart rate quickens and the Tibetan mastiff begins to evolve.', '#db61ac'))
+        .then(() => stepSpace())
+        .then(() => stepWord('🐶🐶🐶🐶🐶🐶'))
+        .then(() => stepSpace())
+        .then(() => stepDown())
+        .then(() => stepWord('致 9.21', 'rgb(228, 231, 12)'))
+        .then(() => stepWord('但愿人长久，千里共婵娟', '#c1e8fa'))
+        .then(() => stepWord('you are my fairy forever', 'red'))
+        .then(() => stepSpace())
+        .then(() => stepWord('🌛🌛🌛🌛🌛🌛'))
+        .then(() => stepSpace())
+        .then(() => stepMoon())
+        .then(() => stepWord('大崽崽', '#c1e8fa'))
+        .then(() => stepWord('big zaizai', '#db61ac'))
+        .then(() => stepSpace())
+        .then(() => stepWord('☀️☀️☀️☀️☀️☀️'))
+        .then(() => stepSpace())
+        .then(() => stepRemove())
+        .then(() => stepWord('但盼风雨来，能留你在此', '#c1e8fa'))
+        .then(() => stepWord("Don't leave me!", '#db61ac'))
+        .then(() => stepSpace())
+        .then(() => stepWord('🌧️🌧️🌧️🌧️🌧️🌧️'))
+        .then(() => stepSpace())
+        .then(() => stepRain())
+        .then(() => stepWord('留你在此，赏彩色的雨', '#c1e8fa'))
+        .then(() => stepWord("I'll create more surprises for you", 'red'))
+        .then(() => stepSpace())
+        .then(() => stepWord('🌈🌈🌈🌈🌈🌈'))
+        .then(() => stepColorFulRain())
+        .then(() => stepHanzi())
+    }, 5000);
+  </script>
+</body>
+
+</html>
